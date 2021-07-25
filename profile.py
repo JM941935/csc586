@@ -1,6 +1,8 @@
 import geni.portal as portal
 import geni.rspec.pg as pg
 import geni.rspec.igext as IG
+
+# 
 pc = portal.Context()
 request = pc.makeRequestRSpec()
 tourDescription = "Assignment-2"
@@ -11,6 +13,7 @@ tour.Description(IG.Tour.TEXT,tourDescription)
 request.addTour(tour)
 link = request.LAN("lan")
 
+# 
 node0 = request.XenVM("webserver")
 node0.routable_control_ip = "true"
 node0.disk_image = "urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU18-64-STD"
@@ -20,6 +23,7 @@ iface0.addAddress(pg.IPv4Address("192.168.1.1", "255.255.255.0"))
 
 link.addInterface(iface0)
 
+# 
 node1 = request.XenVM("observer")
 node1.routable_control_ip = "false"
 node1.disk_image = "urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU18-64-STD"
