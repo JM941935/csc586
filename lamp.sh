@@ -1,23 +1,5 @@
 #!/bin/bash
 
-# remove man-db because its slow
-echo 'removing man-db...'
-apt-get remove -y --purge man-db
-
-# add selections to debconf database
-echo 'adding selections to debconf database...'
-export DEBIAN_FRONTEND="noninteractive"
-bash -c 'echo "mysql-community-server mysql-community-server/re-root-pass password 123" | debconf-set-selections'
-bash -c 'echo "mysql-community-server mysql-community-server/remove-data-dir boolean false" | debconf-set-selections'
-bash -c 'echo "mysql-community-server mysql-community-server/root-pass password 123" | debconf-set-selections'
-bash -c 'echo "phpmyadmin phpmyadmin/app-password-confirm password 123" | debconf-set-selections'
-bash -c 'echo "phpmyadmin phpmyadmin/dbconfig-install boolean true" | debconf-set-selections'
-bash -c 'echo "phpmyadmin phpmyadmin/mysql/admin-pass password 123" | debconf-set-selections'
-bash -c 'echo "phpmyadmin phpmyadmin/mysql/app-pass password 123" | debconf-set-selections'
-bash -c 'echo "phpmyadmin phpmyadmin/password-confirm password 123" | debconf-set-selections'
-bash -c 'echo "phpmyadmin phpmyadmin/reconfigure-webserver select apache2" | debconf-set-selections'
-bash -c 'echo "phpmyadmin phpmyadmin/setup-password password 123" | debconf-set-selections'
-
 # get and install everything except drupal
 echo 'installing packages...'
 wget https://www.cs.wcupa.edu/lngo/data2/mysql-apt-config_0.8.17-1_all.deb -O /users/JM941935/mysql-apt-config_0.8.17-1_all.deb
@@ -95,26 +77,26 @@ echo 'cleaning up...'
 rm '/users/JM941935/mysql-apt-config_0.8.17-1_all.deb'
 rm '/users/JM941935/drupal-8.7.4.tar.gz'
 
-# echo '/etc/apache2/mods-available/userdir.conf'
-# echo '/etc/apache2/mods-enabled/php7.2.conf'
-# echo '/etc/apache2/conf-available/drupal.conf'
-# 
-# ls -l '/users/JM941935/public_html'
-# echo '/users/JM941935/public_html/info.php'
-# 
-# echo "/var/www/html/$DRUPAL"
-# echo "/var/www/html/$DRUPAL/sites/default/files"
-# echo "/var/www/html/$DRUPAL/sites/default/settings.php"
-# 
-# echo "$MACHINE.emulab.net"
-# echo "$MACHINE.emulab.net/~JM941935"
-# echo "$MACHINE.emulab.net/~JM941935/info.php"
-# echo "$MACHINE.emulab.net/phpmyadmin"
-# echo "$MACHINE.emulab.net/$DRUPAL"
-# 
-# # bash -c "sudo -H mysql -u root -e '<command>'"
-# echo 'mysql'
-# echo 'mysql> create database drupal;'
-# echo 'mysql> create user drupal@localhost identified by '123';'
-# echo 'mysql> grant all on drupal.* to drupal@localhost;'
-# echo 'mysql> quit'
+echo '/etc/apache2/mods-available/userdir.conf'
+echo '/etc/apache2/mods-enabled/php7.2.conf'
+echo '/etc/apache2/conf-available/drupal.conf'
+
+ls -l '/users/JM941935/public_html'
+echo '/users/JM941935/public_html/info.php'
+
+echo "/var/www/html/$DRUPAL"
+echo "/var/www/html/$DRUPAL/sites/default/files"
+echo "/var/www/html/$DRUPAL/sites/default/settings.php"
+
+echo "$MACHINE.emulab.net"
+echo "$MACHINE.emulab.net/~JM941935"
+echo "$MACHINE.emulab.net/~JM941935/info.php"
+echo "$MACHINE.emulab.net/phpmyadmin"
+echo "$MACHINE.emulab.net/$DRUPAL"
+
+# bash -c "sudo -H mysql -u root -e '<command>'"
+echo 'mysql'
+echo 'mysql> create database drupal;'
+echo 'mysql> create user drupal@localhost identified by '123';'
+echo 'mysql> grant all on drupal.* to drupal@localhost;'
+echo 'mysql> quit'
