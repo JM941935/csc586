@@ -17,3 +17,6 @@ bash -c 'echo "phpmyadmin phpmyadmin/mysql/app-pass password 123" | debconf-set-
 bash -c 'echo "phpmyadmin phpmyadmin/password-confirm password 123" | debconf-set-selections'
 bash -c 'echo "phpmyadmin phpmyadmin/reconfigure-webserver select apache2" | debconf-set-selections'
 bash -c 'echo "phpmyadmin phpmyadmin/setup-password password 123" | debconf-set-selections'
+
+# 
+wget https://raw.githubusercontent.com/JM941935/csc586/Assignment-2/lamp.sh -O /users/JM941935/lamp.sh
