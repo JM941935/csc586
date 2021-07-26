@@ -41,7 +41,7 @@ done
 
 # if email.txt exists, send its contents to the admin
 # else send an email with no body
-TO="admin.localdomain"
+TO="JM941935@wcupa.edu"
 if [ -f "./email.txt" ]; then
 
     # email the contents of email.txt to the admin
