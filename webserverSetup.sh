@@ -15,9 +15,9 @@ apt-get install -y apache2 php libapache2-mod-php php-cli php-mysql php-cgi php-
 systemctl start apache2 && sleep 1
 
 # 
-echo 'creating /var/webserver_monitor...'
-mkdir '/var/webserver_monitor'
+echo 'creating /var/webserver_log...'
+mkdir '/var/webserver_log'
 
 #
-echo 'mounting /var/webserver_monitor...'
-mount 192.168.1.2:/var/webserver_monitor /var/webserver_monitor
+echo 'mounting /var/webserver_log...'
+mount 192.168.1.2:/var/webserver_monitor /var/webserver_log
