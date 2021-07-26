@@ -46,14 +46,14 @@ if [ -f "./email.txt" ]; then
 
     # email the contents of email.txt to the admin
     SUBJECT="Unauthorized access reported"
-    mail -s "$SUBJECT" "$TO" < $MESSAGE
+    echo "$MESSAGE" | mail -p -s "$SUBJECT" "$TO"
 
     # remove the backup
     rm "./email_bak.txt"
 else
     # email admin with just a subject line
     SUBJECT="No unauthorized access"
-    mail -s "$SUBJECT" "$TO" < ""
+    echo "" | mail -p -s "$SUBJECT" "$TO"
 
     # rename the backup and leave it
     mv "./email_bak.txt" "./email.txt"
