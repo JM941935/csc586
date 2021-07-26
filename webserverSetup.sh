@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# 
+wget https://raw.githubusercontent.com/JM941935/csc586/Assignment-2/webserverSetup.sh -O /users/JM941935/webserverSetup.sh
+wget https://raw.githubusercontent.com/JM941935/csc586/Assignment-2/scan.sh -O /users/JM941935/scan.sh
+
 # remove man-db because its slow
 echo 'removing man-db...'
 apt-get remove -y --purge man-db
