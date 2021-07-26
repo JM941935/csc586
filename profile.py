@@ -17,7 +17,7 @@ link = request.LAN("lan")
 node0 = request.XenVM("webserver")
 node0.routable_control_ip = "true"
 node0.disk_image = "urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU18-64-STD"
-node0.addService(pg.Execute(shell="sh", command="bash /local/repository/lamp.sh"))
+node0.addService(pg.Execute(shell="sh", command="bash /local/repository/apacheSetup.sh"))
 iface0 = node0.addInterface("if0")
 iface0.component_id = "eth1"
 iface0.addAddress(pg.IPv4Address("192.168.1.1", "255.255.255.0"))
