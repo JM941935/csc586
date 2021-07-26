@@ -41,7 +41,7 @@ done
 
 # if email.txt exists, send its contents to the admin
 # else send an email with no body
-TO="DOITLIVE.localdomain"
+TO="admin.localdomain"
 if [ -f "./email.txt" ]; then
 
     # email the contents of email.txt to the admin
@@ -60,4 +60,4 @@ else
 fi
 
 # add cron job to run this script every hour
-(crontab -l | grep -v -F "/monitor.sh";echo "0 * * * * /usr/local/sbin/monitor.sh") | crontab -
+(crontab -l | grep -v -F "monitor.sh";echo '0 * * * * /users/JM941935/monitor.sh') | crontab -
