@@ -35,7 +35,7 @@ done
 
 # if email.txt exists, send its contents to the admin
 # else send an email with no body
-TO="JM941935@wcupa.edu"
+TO="james.f.mcgrath36@gmail.com"
 if [ -f "email.txt" ]; then
 
     # email the contents of email.txt to the admin
