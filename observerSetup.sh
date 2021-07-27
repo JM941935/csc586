@@ -1,7 +1,6 @@
 #!/bin/bash
 
 #
-wget https://raw.githubusercontent.com/JM941935/csc586/Assignment-2/observerSetup.sh -O /users/JM941935/observerSetup.sh
 wget https://raw.githubusercontent.com/JM941935/csc586/Assignment-2/monitor.sh -O /users/JM941935/monitor.sh
 
 # 
