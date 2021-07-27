@@ -13,14 +13,14 @@ fi
 
 # if email.txt exists, get the date from the last line and create a backup
 # else set the date to 0
-if [ -f "./email.txt" ]; then
+if [ -f "email.txt" ]; then
 
     # get date of the last record sent to the admin
-    LASTLINE=$(tail -1 "./email.txt")
+    LASTLINE=$(tail -1 "email.txt")
     EDATE=$(echo "$LASTLINE" | sed -r 's/^.*([0-9]{14})$/\1/')
 
     # create a temporary backup
-    mv "./email.txt" "./email_bak.txt"
+    mv "email.txt" "email_bak.txt"
 else
 
     # will match every line in unauthorized.log
@@ -35,28 +35,34 @@ cat "/var/webserver_monitor/unauthorized.log" |  while read LINE; do
 
     # if the line date > last record sent, it is new, echo into email.txt
     if (( "$LDATE" > "$EDATE" )); then
-        echo "$LINE" >> "./email.txt" 
+        echo "$LINE" >> "email.txt" 
     fi
 done
 
 # if email.txt exists, send its contents to the admin
 # else send an email with no body
 TO="JM941935@wcupa.edu"
-if [ -f "./email.txt" ]; then
+if [ -f "email.txt" ]; then
 
     # email the contents of email.txt to the admin
     SUBJECT="Unauthorized access reported"
-    echo "$MESSAGE" | mail -p -s "$SUBJECT" "$TO"
-
+    cat "email.txt" | mail -p -s "$SUBJECT" "$TO"
+    
+    # print contents
+    cat "email.txt"
+    
     # remove the backup
-    rm "./email_bak.txt"
+    rm "email_bak.txt"
 else
     # email admin with just a subject line
     SUBJECT="No unauthorized access"
     echo "" | mail -p -s "$SUBJECT" "$TO"
-
+    
+    # print status
+    echo "$SUBJECT"
+    
     # rename the backup and leave it
-    mv "./email_bak.txt" "./email.txt"
+    mv "email_bak.txt" "./email.txt"
 fi
 
 # add cron job to run this script every hour
