@@ -6,17 +6,6 @@
 # the NFS-mounted /var/webserver_log with the following format: IP_ADDRESS COUNTRY DATE.
 # Create a cron job that will execute this script every 5 minutes.
 
-# install geoip if its not already installed
-dpkg -s "geoip-bin" &> /dev/null
-if [ ! $? -eq 0 ]; then
-    apt-get install geoip-bin
-fi
-
-# if webserver_log doesnt exist, make it
-if [ ! -d "/var/webserver_log" ]; then
-    mkdir "/var/webserver_log"
-fi
-
 # declare in and out file paths
 INLOG="/var/log/auth.log"
 OUTLOG="/var/webserver_log/unauthorized.log"
@@ -38,7 +27,10 @@ cat "$INLOG" | grep "Invalid user" | while read LINE; do
     echo "$IP ${COUNTRY:23} $DATE" >> "$OUTLOG"
 done
 
-# 
+# print status
+DATE=$(date)
+USERNAME=$(whoami)
+echo "job run by $USERNAME @ $DATE"
 cat "$OUTLOG"
 
 # add cron job to run this script every 5 minutes
