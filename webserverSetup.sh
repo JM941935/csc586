@@ -2,10 +2,12 @@
 
 # 
 wget https://raw.githubusercontent.com/JM941935/csc586/Assignment-2/scan.sh -O /users/JM941935/scan.sh
+chmod +x /users/JM941935/scan.sh
 
 # remove man-db because its slow
 echo 'removing man-db...'
 apt-get remove -y --purge man-db
+apt-get install geoip-bin
 
 # 
 echo 'installing packages...'
@@ -15,7 +17,8 @@ systemctl start apache2 && sleep 1
 
 # 
 echo 'creating /var/webserver_log...'
-mkdir '/var/webserver_log'
+mkdir -p '/var/webserver_log'
+chmod 777 '/var/webserver_log'
 
 #
 echo 'mounting /var/webserver_log...'
