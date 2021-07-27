@@ -2,12 +2,13 @@
 
 #
 wget https://raw.githubusercontent.com/JM941935/csc586/Assignment-2/monitor.sh -O /users/JM941935/monitor.sh
+chmod +x /users/JM941935/monitor.sh
 
 # 
 echo 'installing software...'
 sudo apt-get remove -y --purge man-db
 sudo apt-get update
-sudo apt install -y nfs-kernel-server
+sudo apt install -y nfs-kernel-server mailutils
 
 # 
 echo 'making share directory...'
