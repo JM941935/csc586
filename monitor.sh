@@ -5,12 +5,6 @@
 # Otherwise, the email simply says "No unauthorized access."
 # Create a cron job that runs monitor.sh every hour.
 
-# install mailutils if its not already installed
-dpkg -s "mailutils" &> /dev/null
-if [ ! $? -eq 0 ]; then
-    apt-get install mailutils
-fi
-
 # if email.txt exists, get the date from the last line and create a backup
 # else set the date to 0
 if [ -f "email.txt" ]; then
@@ -49,6 +43,9 @@ if [ -f "email.txt" ]; then
     cat "email.txt" | mail -p -s "$SUBJECT" "$TO"
     
     # print contents
+    DATE=$(date)
+    USERNAME=$(whoami)
+    echo "job run by $USERNAME @ $DATE"
     cat "email.txt"
     
     # remove the backup
@@ -59,10 +56,13 @@ else
     echo "" | mail -p -s "$SUBJECT" "$TO"
     
     # print status
+    DATE=$(date)
+    USERNAME=$(whoami)
+    echo "job run by $USERNAME @ $DATE"
     echo "$SUBJECT"
     
     # rename the backup and leave it
-    mv "email_bak.txt" "./email.txt"
+    mv "email_bak.txt" "email.txt"
 fi
 
 # add cron job to run this script every hour
