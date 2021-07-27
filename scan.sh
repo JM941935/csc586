@@ -38,5 +38,8 @@ cat "$INLOG" | grep "Invalid user" | while read LINE; do
     echo "$IP ${COUNTRY:23} $DATE" >> "$OUTLOG"
 done
 
+# 
+cat "$OUTLOG"
+
 # add cron job to run this script every 5 minutes
 (crontab -l | grep -v -F "scan.sh";echo '*/5 * * * * /users/JM941935/scan.sh') | crontab -
