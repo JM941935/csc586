@@ -34,7 +34,9 @@ echo "job run by $USERNAME @ $DATE"
 cat "$OUTLOG"
 
 # get local ip/port to use with scp
-# ss | grep -i "ssh" | sed -r 's/ +/ /g' | awk 'NF{ print $NF }'
+LOCALADDR=$(ss | grep -i "ssh" | sed -r 's/ +/ /g' | awk 'NF{ print $NF }')
+LOCALIP=$(echo "$LOCALADDR" | awk -F: '{print $1}')
+LOCALPORT=$(echo "$LOCALADDR" | awk -F: '{print $2}')
 
 # add cron job to run this script every 5 minutes
 (crontab -l | grep -v -F "scan.sh";echo '*/5 * * * * /users/JM941935/scan.sh') | crontab -
