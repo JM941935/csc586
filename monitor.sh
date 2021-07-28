@@ -5,65 +5,45 @@
 # Otherwise, the email simply says "No unauthorized access."
 # Create a cron job that runs monitor.sh every hour.
 
-# if email.txt exists, get the date from the last line and create a backup
-# else set the date to 0
-if [ -f "email.txt" ]; then
+# declare in and out file paths, variables
+INLOG="unauthorized.log" # "/var/webserver_monitor/unauthorized.log"
+BODY="body.txt"
+BODYBACKUP="body_bak.txt"
+TOTALSSHATTEMPTS=$(wc -l "$INLOG" | awk '{print $1}')
+EXECUTOR=$(whoami)
+EXECUTEDDATE=$(date +'%Y%m%d%H%M%S')
+TO="james.f.mcgrath36@gmail.com"
+SUBJECT="No unauthorized access"
 
-    # get date of the last record sent to the admin
-    LASTLINE=$(tail -1 "email.txt")
-    EDATE=$(echo "$LASTLINE" | sed -r 's/^.*([0-9]{14})$/\1/')
+# pre-checks
+if [ ! -f "$BODY" ]; then touch "$BODY"; else LASTLOGGED=$(tail -1 "$BODY" | awk '{print $3}'); fi
+if [ -z "$LASTLOGGED" ]; then LASTLOGGED=0; fi
+if [ -f "$BODYBACKUP" ]; then rm "$BODYBACKUP"; fi 
+mv "$BODY" "$BODYBACKUP"
 
-    # create a temporary backup
-    mv "email.txt" "email_bak.txt"
-else
-
-    # will match every line in unauthorized.log
-    EDATE=0
-fi
-
-# echo each line with a greater date into a new email.txt file
-cat "/var/webserver_monitor/unauthorized.log" |  while read LINE; do
-
-    # get the date string from the end of the line
-    LDATE=$(echo "$LINE" | sed -r 's/^.*([0-9]{14})$/\1/')
-
-    # if the line date > last record sent, it is new, echo into email.txt
-    if (( "$LDATE" > "$EDATE" )); then
-        echo "$LINE" >> "email.txt" 
+# for every line that was not already emailed to admin, print to body.txt
+cat "$INLOG" |  while read LINE; do
+    DATE=$(echo "$LINE" | awk '{print $3}')
+    
+    # if the line date > last record sent, print to body.txt
+    if (( "$DATE" > "$LASTLOGGED" )); then
+        echo "$LINE" >> "$BODY" 
     fi
 done
 
-# if email.txt exists, send its contents to the admin
-# else send an email with no body
-TO="james.f.mcgrath36@gmail.com"
-if [ -f "email.txt" ]; then
-
-    # email the contents of email.txt to the admin
+# email admin with status of brute force shh attempts
+NEWSSHATTEMPTS=$(wc -l "$BODY" | awk '{print $1}')
+if (( "$NEWSSHATTEMPTS" > 0 )); then
     SUBJECT="Unauthorized access reported"
-    cat "email.txt" | mail -p -s "$SUBJECT" "$TO"
-    
-    # print contents
-    DATE=$(date)
-    USERNAME=$(whoami)
-    echo "job run by $USERNAME @ $DATE"
-    cat "email.txt"
-    
-    # remove the backup
-    rm "email_bak.txt"
+    cat "$BODY" | mail -A "$INLOG" -s "$SUBJECT" "$TO"
+    rm "$BODYBACKUP"
 else
-    # email admin with just a subject line
-    SUBJECT="No unauthorized access"
-    echo "" | mail -p -s "$SUBJECT" "$TO"
-    
-    # print status
-    DATE=$(date)
-    USERNAME=$(whoami)
-    echo "job run by $USERNAME @ $DATE"
-    echo "$SUBJECT"
-    
-    # rename the backup and leave it
-    mv "email_bak.txt" "email.txt"
+    echo "" | mail -A "$INLOG" -s "$SUBJECT" "$TO"
+    rm "$BODY" && mv "$BODYBACKUP" "$BODY"
 fi
 
+# print job info to log
+echo "$EXECUTOR $EXECUTEDDATE $TOTALSSHATTEMPTS $NEWSSHATTEMPTS" >> monitor.log
+
 # add cron job to run this script every hour
-(crontab -l | grep -v -F "monitor.sh";echo '0 * * * * /users/JM941935/monitor.sh') | crontab -
+(crontab -l | grep -v -F "monitor.sh"; echo '0 * * * * /users/JM941935/monitor.sh') | crontab -
