@@ -6,42 +6,36 @@
 # the NFS-mounted /var/webserver_log with the following format: IP_ADDRESS COUNTRY DATE.
 # Create a cron job that will execute this script every 5 minutes.
 
-# declare in and out file paths
-INLOG="/var/log/auth.log"
-OUTLOG="/var/webserver_log/unauthorized.log"
+# declare in and out file paths, variables
+INLOG="auth.log" # "/var/log/auth.log"
+OUTLOG="unauthorized.log" # "/var/webserver_log/unauthorized.log"
+OLDLOGSIZE=$(wc -l "$OUTLOG" | awk '{print $1}')
+LASTLOGGED=$(tail -1 "$OUTLOG" | awk '{print $3}')
+if [ -z "$LASTLOGGED" ]; then LASTLOGGED=0; fi
+TOTALSSHATTEMPTS=$(cat "$INLOG" | grep -c "Invalid user")
+EXECUTOR=$(whoami)
+EXECUTEDDATE=$(date +'%Y%m%d%H%M%S')
 
 # extract ip, country, and date from each matching line
 cat "$INLOG" | grep "Invalid user" | while read LINE; do
+    DATESTRING=$(echo "$LINE" | awk '{printf "%s %s %s", $1, $2, $3}')
+    DATE=$(date -d "$DATESTRING" +'%Y%m%d%H%M%S') # format YyyyMmDdHhMmSs (24 hour clock)
 
-    # extract IP address
-    IP=$(echo "$LINE" | awk '{print $10}')
+    # if date > lastlogged, print to log
+    if (( "$DATE" > "$LASTLOGGED" )); then
+        IP=$(echo "$LINE" | awk '{print $10}')
+        COUNTRY=$(geoiplookup $IP | cut -c24-25)
 
-    # get country with geoiplookup
-    COUNTRY=$(geoiplookup $IP)
-
-    # extract and convert date to format YyyyMmDdHhMmSs (24 hour clock)
-    DATESTRING=$(echo "$LINE" | sed -r 's/^(.*)localhost.*/\1/')
-    DATE=$(date -d "$DATESTRING" +'%Y%m%d%H%M%S')
-
-    # echo result into unauthorized.log
-    echo "$IP ${COUNTRY:23} $DATE" >> "$OUTLOG"
+        # if country == IP, IP was not found in db
+        if [[ "$COUNTRY" == "IP" ]]; then COUNTRY='??'; fi
+        echo "$IP $COUNTRY $DATE" >> "$OUTLOG"
+    fi
 done
 
-# print status
-DATE=$(date)
-USERNAME=$(whoami)
-echo "job run by $USERNAME @ $DATE"
-cat "$OUTLOG"
-
-#
-rm "auth.log"
-cp "/var/log/auth.log" "auth.log"
-echo "update" | mail -A "/var/webserver_log/unauthorized.log" -A "auth.log" -s "update" "james.f.mcgrath36@gmail.com"
-
-# get local ip/port to use with scp
-# LOCALADDR=$(ss | grep -i "ssh" | sed -r 's/ +/ /g' | awk 'NF{ print $NF }')
-# LOCALIP=$(echo "$LOCALADDR" | awk -F: '{print $1}')
-# LOCALPORT=$(echo "$LOCALADDR" | awk -F: '{print $2}')
+# print job info to log
+NEWLOGSIZE=$(wc -l "$OUTLOG" | awk '{print $1}')
+NEWSSHATTEMPTS=$(($NEWLOGSIZE-$OLDLOGSIZE))
+echo "$EXECUTOR $EXECUTEDDATE $TOTALSSHATTEMPTS $NEWLOGSIZE $OLDLOGSIZE $NEWSSHATTEMPTS" >> scan.log
 
 # add cron job to run this script every 5 minutes
-(crontab -l | grep -v -F "scan.sh";echo '*/5 * * * * /users/JM941935/scan.sh') | crontab -
+(crontab -l | grep -v -F "scan.sh"; echo '*/5 * * * * /users/JM941935/scan.sh') | crontab -
