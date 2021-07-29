@@ -17,7 +17,7 @@ EXECUTOR=$(whoami)
 EXECUTEDDATE=$(date +'%Y%m%d%H%M%S')
 
 # extract ip, country, and date from each matching line
-cat "$INLOG" | grep "Invalid user" | while read LINE; do
+cat "$INLOG" | grep -E 'Invalid user)|(Disconnected from authenticating user root)' | while read LINE; do
     DATESTRING=$(echo "$LINE" | awk '{printf "%s %s %s", $1, $2, $3}')
     DATE=$(date -d "$DATESTRING" +'%Y%m%d%H%M%S') # format YyyyMmDdHhMmSs (24 hour clock)
 
