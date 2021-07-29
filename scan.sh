@@ -7,8 +7,8 @@
 # Create a cron job that will execute this script every 5 minutes.
 
 # declare in and out file paths, variables
-INLOG="auth.log" # "/var/log/auth.log"
-OUTLOG="unauthorized.log" # "/var/webserver_log/unauthorized.log"
+INLOG="/var/log/auth.log"
+OUTLOG="/var/webserver_log/unauthorized.log"
 OLDLOGSIZE=$(wc -l "$OUTLOG" | awk '{print $1}')
 LASTLOGGED=$(tail -1 "$OUTLOG" | awk '{print $3}')
 if [ -z "$LASTLOGGED" ]; then LASTLOGGED=0; fi
@@ -36,6 +36,7 @@ done
 NEWLOGSIZE=$(wc -l "$OUTLOG" | awk '{print $1}')
 NEWSSHATTEMPTS=$(($NEWLOGSIZE-$OLDLOGSIZE))
 echo "$EXECUTOR $EXECUTEDDATE $TOTALSSHATTEMPTS $NEWLOGSIZE $OLDLOGSIZE $NEWSSHATTEMPTS" >> scan.log
+cat "scan.log"
 
 # add cron job to run this script every 5 minutes
 (crontab -l | grep -v -F "scan.sh"; echo '*/5 * * * * /users/JM941935/scan.sh') | crontab -
