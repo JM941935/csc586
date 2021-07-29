@@ -24,6 +24,11 @@ echo 'creating /var/webserver_log/unauthorized.log...'
 bash -c 'touch "/var/webserver_log/unauthorized.log"'
 chmod 777 '/var/webserver_log/unauthorized.log'
 
+# 
+echo 'creating /var/log/auth.log...'
+bash -c 'touch "/var/log/auth.log"'
+chmod 777 '/var/log/auth.log'
+
 #
 echo 'mounting /var/webserver_log...'
 mount 192.168.1.2:/var/webserver_monitor /var/webserver_log
