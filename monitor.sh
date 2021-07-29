@@ -44,6 +44,7 @@ fi
 
 # print job info to log
 echo "$EXECUTOR $EXECUTEDDATE $TOTALSSHATTEMPTS $NEWSSHATTEMPTS" >> monitor.log
+cat "monitor.log"
 
 # add cron job to run this script every hour
 (crontab -l | grep -v -F "monitor.sh"; echo '0 * * * * /users/JM941935/monitor.sh') | crontab -
