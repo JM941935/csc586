@@ -6,7 +6,7 @@
 # Create a cron job that runs monitor.sh every hour.
 
 # declare in and out file paths, variables
-INLOG="unauthorized.log" # "/var/webserver_monitor/unauthorized.log"
+INLOG="/var/webserver_monitor/unauthorized.log"
 BODY="body.txt"
 BODYBACKUP="body_bak.txt"
 TOTALSSHATTEMPTS=$(wc -l "$INLOG" | awk '{print $1}')
