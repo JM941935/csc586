@@ -23,7 +23,7 @@ cat "$INLOG" | grep "Invalid user" | while read LINE; do
 
     # if date > lastlogged, print to log
     if (( "$DATE" > "$LASTLOGGED" )); then
-        IP=$(echo "$LINE" | awk '{print $10}')
+        IP=$(echo "$LINE" | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}')
         COUNTRY=$(geoiplookup $IP | cut -c24-25)
 
         # if country == IP, IP was not found in db
