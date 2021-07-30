@@ -1,12 +1,8 @@
 #!/bin/bash
 
-#
-wget https://raw.githubusercontent.com/JM941935/csc586/Assignment-2/monitor.sh -O /users/JM941935/monitor.sh
-chmod 777 /users/JM941935/monitor.sh
-
 # 
 echo 'installing packages'
-sudo apt-get remove -y --purge man-db
+sudo apt-get remove -y --purge man-db && apt-get install man-db
 sudo apt-get update
 sudo apt install -y nfs-kernel-server mailutils
 
