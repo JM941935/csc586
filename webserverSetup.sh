@@ -31,6 +31,7 @@ if [[ -f '/var/log/auth.log' ]]; then (chmod 644 '/var/log/auth.log' && echo 'ch
 
 # set loglevel to verbose
 echo 'setting LogLevel to VERBOSE'
+sed -i -r 's/^#(SyslogFacility AUTH)/\1/g' '/etc/ssh/sshd_config' && echo 'SyslogFacility set to AUTH'
 sed -i -r 's/^#(LogLevel) INFO/\1 VERBOSE/g' '/etc/ssh/sshd_config' && echo 'LogLevel set to VERBOSE'
 systemctl restart sshd && sleep 1
 
