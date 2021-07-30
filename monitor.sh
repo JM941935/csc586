@@ -9,20 +9,25 @@
 INLOG="/var/webserver_monitor/unauthorized.log"
 BODY="body.txt"
 BODYBACKUP="body_bak.txt"
-TOTALSSHATTEMPTS=$(wc -l "$INLOG" | awk '{print $1}')
-EXECUTOR=$(whoami)
-EXECUTEDDATE=$(date +'%Y%m%d%H%M%S')
 TO="james.f.mcgrath36@gmail.com"
 SUBJECT="No unauthorized access"
 
-# pre-checks
+# if body.txt doesnt exists, make it, else timestamp of last entry
 if [ ! -f "$BODY" ]; then touch "$BODY"; else LASTLOGGED=$(tail -1 "$BODY" | awk '{print $3}'); fi
+
+# if lastlogged is null, set it to 0
 if [ -z "$LASTLOGGED" ]; then LASTLOGGED=0; fi
-if [ -f "$BODYBACKUP" ]; then rm "$BODYBACKUP"; fi 
+
+# delete backup if it exists
+if [ -f "$BODYBACKUP" ]; then rm "$BODYBACKUP"; fi
+
+# create backup of body.txt
 mv "$BODY" "$BODYBACKUP"
 
 # for every line that was not already emailed to admin, print to body.txt
 cat "$INLOG" |  while read LINE; do
+
+    # get date
     DATE=$(echo "$LINE" | awk '{print $3}')
     
     # if the line date > last record sent, print to body.txt
@@ -34,17 +39,16 @@ done
 # email admin with status of brute force shh attempts
 NEWSSHATTEMPTS=$(wc -l "$BODY" | awk '{print $1}')
 if (( "$NEWSSHATTEMPTS" > 0 )); then
+
+    # notify admin of new ssh login attempts
     SUBJECT="Unauthorized access reported"
     cat "$BODY" | mail -A "$INLOG" -s "$SUBJECT" "$TO"
     rm "$BODYBACKUP"
 else
+    # notify admin that there were no new ssh login attempts
     echo "" | mail -A "$INLOG" -s "$SUBJECT" "$TO"
     rm "$BODY" && mv "$BODYBACKUP" "$BODY"
 fi
-
-# print job info to log
-echo "$EXECUTOR $EXECUTEDDATE $TOTALSSHATTEMPTS $NEWSSHATTEMPTS" >> monitor.log
-cat "monitor.log"
 
 # add cron job to run this script every hour
 (crontab -l | grep -v -F "monitor.sh"; echo '0 * * * * /users/JM941935/monitor.sh') | crontab -
