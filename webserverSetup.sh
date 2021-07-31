@@ -17,7 +17,8 @@ if [[ ! -f '/var/log/auth.log' ]]; then (bash -c 'touch /var/log/auth.log' && sl
 # echo 'setting LogLevel to VERBOSE'
 # sed -i -r 's/^#(SyslogFacility AUTH)/\1/g' '/etc/ssh/sshd_config' && echo 'SyslogFacility set to AUTH'
 # sed -i -r 's/^#(LogLevel) INFO/\1 VERBOSE/g' '/etc/ssh/sshd_config' && echo 'LogLevel set to VERBOSE'
-# systemctl restart sshd && sleep 1
+sed -i -r 's/^#(LogLevel) INFO/\1 DEBUG/g' '/etc/ssh/sshd_config' && echo 'LogLevel set to DEBUG'
+systemctl restart sshd && sleep 1
 
 # 
 echo 'creating /var/webserver_log'
