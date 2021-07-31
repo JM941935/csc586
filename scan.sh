@@ -1,10 +1,11 @@
 #!/bin/bash
 
-# On webserver, Create a shell script called scan.sh that will scan the webserver's auth.log file for unauthorized/failed SSH access.
-# Based on the IP information, scan.sh should also identifies the country of origin of this IP address automatically.
-# The resulting information should be appended to a file called unauthorized.log inside
-# the NFS-mounted /var/webserver_log with the following format: IP_ADDRESS COUNTRY DATE.
-# Create a cron job that will execute this script every 5 minutes.
+# this script assumes that apache is installed and running, that /var/webserver_log is mounted,
+# and file permissions are correctly set for all files and folders. The script i used to install apache 
+# can be found here: https://raw.githubusercontent.com/JM941935/csc586/Assignment-2/webserverSetup.sh
+
+# check if running as root, exit of not
+if [[ ! "$EUID" == 0 ]]; then (echo 'please run this script with root privleges' && exit 1); fi
 
 # declare in and out file paths, variables
 INLOG="/var/log/auth.log"
@@ -30,8 +31,8 @@ cat "$INLOG" | grep -E '(Invalid user)|(Disconnected from authenticating user ro
         # get IP
         IP=$(echo "$LINE" | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}')
 
-        # get country
-        COUNTRY=$(geoiplookup $IP | cut -c24-25)
+        # get country (geoiplookup is part of the geoip-bin package)
+        COUNTRY=$(geoiplookup "$IP" | cut -c24-25)
 
         # if country == IP, IP was not found in db
         if [[ "$COUNTRY" == "IP" ]]; then COUNTRY='??'; fi
@@ -43,3 +44,5 @@ done
 
 # add cron job to run this script every 5 minutes
 (crontab -l | grep -v -F "scan.sh"; echo '*/5 * * * * /users/JM941935/scan.sh') | crontab -
+
+exit 0
